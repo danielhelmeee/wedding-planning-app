@@ -1,0 +1,31 @@
+# Dependencies and build output
+node_modules/
+dist/
+dist-ssr/
+coverage/
+.next/
+*.tsbuildinfo
+
+# Local environment and data
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.local
+.data/
+
+# Editor and OS files
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Course material kept local for this public app repository
+/prompts/
+/templates/
+/work-cards/
+/anti-slop/
+/README_FOR_TRAINERS.md
+/START_HERE.md
+/bm-copy-review.md
+/build-status.md

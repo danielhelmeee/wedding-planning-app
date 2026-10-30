@@ -1,0 +1,1990 @@
+/* ==========================================================================
+   Guest e-invitation (InviteView). Colours and fonts come from --iv-* variables
+   set by the theme (inviteThemes.js). This is the couple's artwork, so it may use
+   soft gradients, glass and texture; the app's own UI stays flat (styles.css).
+   ========================================================================== */
+
+.iv-shell {
+  --iv-h: 100svh;
+  --iv-dock-h: calc(64px + env(safe-area-inset-bottom));
+  position: relative;
+  color: var(--iv-ink);
+  font-family: var(--iv-font-body);
+  background: var(--iv-bg-alt);
+  -webkit-font-smoothing: antialiased;
+}
+
+.iv-shell p {
+  margin: 0;
+}
+
+/* Inside the studio's phone frame */
+.phone-frame {
+  container-type: size;
+}
+
+.iv-shell.is-contained {
+  --iv-h: 100cqh;
+  height: 100%;
+  overflow: hidden;
+}
+
+.iv-shell.is-contained .iv-scroll {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.iv-shell.is-contained .iv-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Full screen: the page is a phone-width column; the cover locks scrolling until opened. */
+.iv-shell:not(.is-contained) {
+  min-height: 100svh;
+}
+
+.iv-shell:not(.is-contained):not(.is-open) {
+  height: 100svh;
+  overflow: hidden;
+}
+
+.iv-shell.is-contained:not(.is-open) .iv-scroll {
+  overflow: hidden;
+}
+
+.iv-page {
+  position: relative;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--iv-bg);
+}
+
+/* ---------- Hero: exactly one screen tall ---------- */
+.iv-hero {
+  position: relative;
+  isolation: isolate;
+  min-height: var(--iv-h);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 22% 30px 18%;
+  overflow: hidden;
+  text-align: center;
+  color: var(--iv-hero-ink);
+}
+
+.iv-art {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  transform: scale(1.08);
+  transition: transform 2600ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.is-revealed .iv-hero .iv-art {
+  transform: none;
+}
+
+.iv-art svg,
+.iv-art img {
+  display: block;
+  height: auto;
+}
+
+.art-fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100% !important;
+}
+
+.iv-hero-text {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  max-width: 340px;
+}
+
+.iv-hero-tagline {
+  max-width: 290px;
+  font-family: var(--iv-font-heading);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.5;
+  opacity: 0.88;
+}
+
+.iv-hero-names {
+  margin: 4px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: 400;
+}
+
+.iv-name {
+  font-family: var(--iv-font-names);
+  text-transform: var(--iv-names-case);
+  line-height: 1.05;
+}
+
+.iv-hero-names .iv-name {
+  font-size: 43px;
+  letter-spacing: 0.03em;
+}
+
+.theme-garden .iv-hero-names .iv-name,
+.theme-songket .iv-hero-names .iv-name {
+  font-size: 35px;
+  letter-spacing: 0.07em;
+}
+
+.iv-hero-names .iv-amp {
+  font-size: 38px;
+}
+
+/* A soft drop shadow keeps the cover text legible over artwork:
+   dark heroes get a dark shadow, light heroes a light halo plus a faint shadow. */
+.iv-hero-text {
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.16),
+    0 0 18px var(--iv-hero-bg),
+    0 0 6px var(--iv-hero-bg);
+}
+
+.iv-hero.on-dark .iv-hero-text {
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    0 4px 22px rgba(0, 0, 0, 0.45);
+}
+
+.iv-amp {
+  font-family: var(--iv-font-script);
+  font-size: 40px;
+  line-height: 1.1;
+  opacity: 0.85;
+}
+
+.iv-hero-date {
+  font-family: var(--iv-font-heading);
+  font-size: 16.5px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.iv-hero-venue {
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+/* Staged entrance after the cover opens */
+.hero-step {
+  opacity: 0;
+  transform: translateY(18px);
+  filter: blur(4px);
+  transition:
+    opacity 1000ms ease,
+    transform 1100ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    filter 1000ms ease;
+  transition-delay: calc(var(--step) * 170ms + 450ms);
+}
+
+.is-revealed .hero-step {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* ---------- Hero artwork placement per theme ---------- */
+.art-garden-tl {
+  position: absolute;
+  top: -7%;
+  left: -20%;
+  width: 98%;
+}
+
+.art-garden-br {
+  position: absolute;
+  bottom: -9%;
+  right: -22%;
+  width: 88%;
+  transform: rotate(180deg);
+}
+
+/* Songket: woven threads under the motifs */
+.art-songket::before,
+.theme-songket .iv-sec::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.12) 0 1px, transparent 1px 4px);
+  pointer-events: none;
+}
+
+/* In content sections the weave sits behind everything (photos included), above the section colour. */
+.theme-songket .iv-sec::before {
+  z-index: -1;
+}
+
+.art-band {
+  position: absolute;
+  left: 0;
+  width: 100%;
+}
+
+.art-band.top {
+  top: 0;
+}
+
+.art-band.bottom {
+  bottom: 0;
+}
+
+.art-batik-tr {
+  position: absolute;
+  top: -8%;
+  right: -26%;
+  width: 84%;
+  opacity: 0.88;
+}
+
+.art-batik-bl {
+  position: absolute;
+  bottom: -3%;
+  left: -24%;
+  width: 70%;
+  opacity: 0.88;
+}
+
+.art-sky {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 78% 14%, color-mix(in srgb, var(--iv-accent) 26%, transparent), transparent 42%),
+    linear-gradient(180deg, color-mix(in srgb, #000 35%, var(--iv-hero-bg)), var(--iv-hero-bg) 62%);
+}
+
+/* The moon's glow breathes slowly; alternate direction makes the loop seamless. */
+.moon-glow,
+.moon-halo {
+  animation: moon-breathe 4.8s ease-in-out 1;
+}
+
+.moon-halo {
+  opacity: 0.7;
+}
+
+@keyframes moon-breathe {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.art-midnight-blooms {
+  position: absolute;
+  bottom: -3%;
+  left: -8%;
+  width: 116%;
+}
+
+.art-minimal .art-frame.thin {
+  position: absolute;
+  inset: 22px;
+  border: 1px solid var(--iv-line);
+}
+
+.art-sprig {
+  position: absolute;
+  width: 42%;
+  opacity: 0.85;
+}
+
+/* Fine-line sprays: each one hangs from the top edge or grows from the bottom edge, its stem ends out of view. */
+.art-sprig.tl {
+  top: -6%;
+  left: -6%;
+  transform: rotate(162deg);
+}
+
+.art-sprig.br {
+  bottom: -2%;
+  right: -8%;
+}
+
+.theme-minimal .iv-section-art {
+  width: 34%;
+  opacity: 0.85;
+}
+
+.theme-minimal .iv-section-art.hang-left {
+  top: -22px;
+  left: -26px;
+  transform: rotate(166deg);
+}
+
+.theme-minimal .iv-section-art.rise-right {
+  bottom: -52px;
+  right: -26px;
+  transform: rotate(-8deg);
+}
+
+/* ---------- Content sections ---------- */
+.iv-sec {
+  position: relative;
+  isolation: isolate;
+  padding: 96px 30px;
+  overflow: hidden;
+  text-align: center;
+}
+
+.iv-sec-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.iv-section-art {
+  position: absolute;
+  z-index: 0;
+  width: 48%;
+  pointer-events: none;
+}
+
+.iv-section-art .corner-art {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.iv-section-art .corner-art.small {
+  width: 64%;
+}
+
+.iv-section-art.right {
+  top: -36px;
+  right: -56px;
+  transform: rotate(12deg);
+}
+
+.iv-section-art.left {
+  top: -36px;
+  left: -56px;
+  transform: scaleX(-1) rotate(12deg);
+}
+
+.iv-section-art.left-bottom {
+  bottom: -46px;
+  left: -56px;
+  transform: rotate(196deg);
+}
+
+.theme-champagne .iv-section-art.right {
+  top: 10px;
+  right: 10px;
+  transform: scaleX(-1);
+}
+
+.theme-champagne .iv-section-art.left {
+  top: 10px;
+  left: 10px;
+  transform: none;
+}
+
+.theme-champagne .iv-section-art.left-bottom {
+  bottom: 10px;
+  left: 10px;
+  transform: scaleY(-1);
+}
+
+.theme-champagne .iv-section-art .corner-art.small {
+  width: 100%;
+}
+
+.theme-champagne .iv-section-art {
+  width: 26%;
+}
+
+.iv-bismillah {
+  font-family: 'Amiri', serif;
+  font-size: 28px;
+  color: var(--iv-accent);
+  margin-bottom: 26px !important;
+}
+
+.iv-kicker,
+.iv-section-title {
+  font-family: var(--iv-font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--iv-accent);
+}
+
+.iv-section-title {
+  margin: 0 0 24px;
+}
+
+.iv-divider {
+  display: block;
+  width: 170px;
+  height: auto;
+  margin: 14px auto 18px;
+}
+
+.iv-hosts {
+  font-family: var(--iv-font-heading);
+  font-size: 21px;
+  line-height: 1.4;
+  margin-bottom: 16px !important;
+}
+
+.iv-body {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--iv-muted);
+}
+
+.iv-couple {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 30px !important;
+  color: var(--iv-accent);
+}
+
+.iv-couple .iv-name {
+  font-size: 34px;
+}
+
+.theme-garden .iv-couple .iv-name,
+.theme-songket .iv-couple .iv-name {
+  font-size: 27px;
+  letter-spacing: 0.06em;
+}
+
+.iv-couple .iv-amp {
+  font-size: 32px;
+  color: var(--iv-muted);
+}
+
+/* Events */
+.iv-event + .iv-event {
+  margin-top: 72px;
+}
+
+.iv-event-name {
+  margin: 0;
+  font-family: var(--iv-font-heading);
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--iv-accent);
+}
+
+.iv-facts {
+  margin: 0;
+  display: grid;
+  gap: 18px;
+}
+
+.iv-facts dt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--iv-muted);
+}
+
+.iv-facts dd {
+  margin: 4px 0 0;
+  font-size: 16px;
+}
+
+.iv-facts dd strong,
+.iv-facts dd span {
+  display: block;
+}
+
+.iv-facts dd strong {
+  font-weight: 600;
+}
+
+.iv-facts dd span {
+  font-size: 14px;
+  color: var(--iv-muted);
+}
+
+.iv-icon {
+  flex: none;
+}
+
+.iv-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.iv-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 18px;
+  border: 1px solid var(--iv-accent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--iv-accent);
+  font: 600 13px var(--iv-font-body);
+  text-decoration: none;
+  transition: background 200ms ease;
+}
+
+.iv-btn:hover {
+  background: color-mix(in srgb, var(--iv-accent) 10%, transparent);
+}
+
+.iv-btn-solid {
+  margin-top: 12px;
+  background: var(--iv-accent);
+  color: var(--iv-on-accent);
+}
+
+.iv-btn-solid:hover {
+  background: color-mix(in srgb, var(--iv-accent) 86%, #000);
+}
+
+.iv-btn:focus-visible,
+.iv-dock-btn:focus-visible,
+.iv-sheet-close:focus-visible,
+.peel-button:focus-visible {
+  outline: 2px solid var(--iv-accent);
+  outline-offset: 3px;
+}
+
+/* ---------- Programme: frosted glass over artwork ---------- */
+.iv-band {
+  position: relative;
+  isolation: isolate;
+  padding: 120px 26px;
+  overflow: hidden;
+}
+
+.iv-band .iv-art {
+  transform: none;
+}
+
+.band-left,
+.band-right {
+  position: absolute;
+  width: 78%;
+}
+
+.band-left {
+  top: -60px;
+  left: -120px;
+}
+
+.band-right {
+  bottom: -70px;
+  right: -120px;
+  transform: rotate(180deg);
+}
+
+.band-left svg,
+.band-right svg,
+.band-left img,
+.band-right img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.iv-glass {
+  position: relative;
+  z-index: 1;
+  max-width: 330px;
+  margin: 0 auto;
+  padding: 36px 26px 30px;
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--iv-glass) 92%, var(--iv-bg));
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.45);
+  text-align: center;
+  color: var(--iv-ink);
+}
+
+.is-dark .iv-glass {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.iv-glass + .iv-glass {
+  margin-top: 32px;
+}
+
+.iv-glass-title {
+  margin: 0;
+  font-family: var(--iv-font-heading);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--iv-accent);
+}
+
+.iv-glass-sub {
+  margin-top: 6px !important;
+  font-family: var(--iv-font-heading);
+  font-size: 22px;
+  font-style: italic;
+}
+
+.iv-timeline {
+  list-style: none;
+  margin: 22px 0 0;
+  padding: 0;
+  position: relative;
+}
+
+.iv-timeline li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 0;
+}
+
+.iv-timeline li + li::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  transform: rotate(45deg);
+  background: var(--iv-accent);
+  opacity: 0.6;
+}
+
+.iv-timeline-time {
+  font-family: var(--iv-font-heading);
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--iv-accent);
+}
+
+.iv-timeline-item {
+  font-size: 13px;
+  color: var(--iv-muted);
+}
+
+/* ---------- Photo gallery: swipe between photos ---------- */
+.iv-gallery {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.iv-slides {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.iv-slides::-webkit-scrollbar {
+  display: none;
+}
+
+.iv-slide {
+  flex: 0 0 100%;
+  padding: 0 28px;
+  scroll-snap-align: center;
+}
+
+.iv-slide img,
+.iv-slide-empty {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 20px 44px -26px rgba(0, 0, 0, 0.5);
+  background: var(--iv-bg-alt);
+}
+
+.iv-dots {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 18px;
+}
+
+.iv-dots span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--iv-line);
+  transition:
+    background 300ms ease,
+    transform 300ms ease;
+}
+
+.iv-dots span.is-on {
+  background: var(--iv-accent);
+  transform: scale(1.25);
+}
+
+/* ---------- Countdown ---------- */
+.iv-count {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.iv-count-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px 0 12px;
+  border: 1px solid var(--iv-line);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--iv-bg-alt) 55%, transparent);
+}
+
+.iv-count-n {
+  font-family: var(--iv-font-heading);
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--iv-accent);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.iv-count-u {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--iv-muted);
+}
+
+/* ---------- Dress code, doa ---------- */
+.iv-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--iv-muted);
+  margin-bottom: 6px !important;
+}
+
+.iv-dress p:last-child {
+  font-family: var(--iv-font-heading);
+  font-size: 19px;
+}
+
+.iv-doa {
+  font-family: var(--iv-font-heading);
+  font-size: 18px;
+  font-style: italic;
+  line-height: 1.65;
+}
+
+.iv-closing-line {
+  margin-top: 22px !important;
+  font-size: 13px;
+  color: var(--iv-muted);
+}
+
+/* ---------- Closing arch ---------- */
+.iv-arch-wrap {
+  position: relative;
+  padding-top: 40px;
+  overflow: hidden;
+}
+
+.iv-arch {
+  position: relative;
+}
+
+.iv-arch-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.iv-arch-from {
+  font: 600 11px var(--iv-font-body);
+  letter-spacing: 0.34em;
+}
+
+.iv-arch-sign {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 22%;
+  text-align: center;
+  font-family: var(--iv-font-script);
+  font-size: 40px;
+  line-height: 1;
+}
+
+/* ---------- Docked menu ---------- */
+.iv-dock {
+  position: sticky;
+  bottom: 0;
+  z-index: 7; /* above the sheets, which rise from behind it */
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: var(--iv-dock-h);
+  padding: 0 8px env(safe-area-inset-bottom);
+  background: color-mix(in srgb, var(--iv-bg-alt) 74%, transparent);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border-top: 1px solid var(--iv-line);
+  transform: translateY(100%);
+  opacity: 0;
+  transition:
+    transform 600ms cubic-bezier(0.2, 0.8, 0.2, 1) 1400ms,
+    opacity 600ms ease 1400ms;
+}
+
+.is-revealed .iv-dock {
+  transform: none;
+  opacity: 1;
+}
+
+.iv-dock-btn.is-active {
+  font-weight: 700;
+}
+
+.iv-dock-btn.is-active::after {
+  content: '';
+  width: 4px;
+  height: 4px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.iv-dock-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 60px;
+  min-height: 48px;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--iv-accent);
+  font: 600 11px var(--iv-font-body);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+/* ---------- Particles and sheets ---------- */
+/* Stars stay inside the cover: above its artwork, below its text. */
+.iv-hero > .iv-particles {
+  position: absolute;
+  z-index: 0;
+}
+
+.iv-particles {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Sheets live above the content but below the menu bar, clipped at the bar's top edge,
+   so they rise out from behind it and nothing else moves. */
+.iv-sheet-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: var(--iv-dock-h);
+  z-index: 6;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Only the dim backdrop fades; the sheet stays solid while it slides. */
+.iv-sheet-layer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.36);
+  animation: iv-fade-in 320ms ease both;
+}
+
+.iv-sheet-layer.is-leaving::before {
+  animation: iv-fade-out 320ms ease both;
+}
+
+.is-contained .iv-particles,
+.is-contained .iv-sheet-layer,
+.is-contained .opening {
+  position: absolute;
+}
+
+.iv-sheet {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  max-height: 80%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 10px 22px 24px;
+  border-radius: 24px 24px 0 0;
+  background-color: var(--iv-bg);
+  color: var(--iv-ink);
+  box-shadow: 0 -12px 40px -16px rgba(0, 0, 0, 0.35);
+  will-change: transform;
+  animation: iv-sheet-up 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.is-leaving .iv-sheet {
+  animation: iv-sheet-down 320ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+.iv-sheet-handle {
+  width: 40px;
+  height: 4px;
+  margin: 0 auto 10px;
+  border-radius: 4px;
+  background: var(--iv-line);
+}
+
+.iv-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.iv-sheet-head h2 {
+  margin: 0;
+  font-family: var(--iv-font-heading);
+  font-size: 24px;
+  color: var(--iv-accent);
+}
+
+.iv-sheet-close {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--iv-accent) 10%, transparent);
+  color: var(--iv-accent);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.iv-sheet-row {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--iv-line);
+  text-align: center;
+  font-size: 14px;
+}
+
+.iv-sheet-row:last-child {
+  border-bottom: 0;
+}
+
+.iv-sheet-row .iv-buttons {
+  margin-top: 12px;
+}
+
+.iv-sheet-strong {
+  font-family: var(--iv-font-heading);
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.iv-sheet-muted {
+  color: var(--iv-muted);
+  font-size: 13px;
+}
+
+@keyframes iv-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes iv-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes iv-sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes iv-sheet-down {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+/* ---------- Music: a persistent sheet (keeps the player loaded) and a floating play / pause disc ---------- */
+.iv-music-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: var(--iv-dock-h);
+  z-index: 6;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.is-contained .iv-music-layer,
+.is-contained .iv-music-btn {
+  position: absolute;
+}
+
+.iv-music-layer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.36);
+  opacity: 0;
+  transition: opacity 320ms ease;
+}
+
+.iv-music-layer.is-open {
+  pointer-events: auto;
+}
+
+.iv-music-layer.is-open::before {
+  opacity: 1;
+}
+
+.iv-music-sheet {
+  animation: none;
+  transform: translateY(105%);
+  transition: transform 320ms cubic-bezier(0.4, 0, 1, 1);
+}
+
+.iv-music-layer.is-open .iv-music-sheet {
+  transform: translateY(0);
+  transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.iv-music-player {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 200px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #000;
+}
+
+.iv-music-player iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.iv-music-note {
+  margin-top: 12px !important;
+  text-align: center;
+}
+
+.iv-music-btn {
+  position: fixed;
+  right: 14px;
+  bottom: calc(var(--iv-dock-h) + 14px);
+  z-index: 5;
+  width: 48px;
+  height: 48px;
+  padding: 4px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--iv-accent);
+  cursor: pointer;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
+  animation: iv-fade-in 600ms ease 1600ms both;
+}
+
+.iv-music-btn:focus-visible {
+  outline: 2px solid var(--iv-accent);
+  outline-offset: 3px;
+}
+
+.iv-disc {
+  transform-origin: 20px 20px;
+}
+
+/* One full turn every 6 s, linear, so the loop is seamless; paused keeps its angle. */
+.iv-music-btn .iv-disc {
+  animation: iv-spin 6s linear infinite;
+  animation-play-state: paused;
+}
+
+.iv-music-btn.is-playing .iv-disc {
+  animation-play-state: running;
+}
+
+@keyframes iv-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Scroll reveals ---------- */
+.reveal {
+  opacity: 0;
+  transition:
+    opacity 900ms ease,
+    transform 1000ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.reveal-up {
+  transform: translateY(26px);
+}
+
+.reveal-zoom {
+  transform: scale(0.94);
+}
+
+.reveal.is-shown {
+  opacity: 1;
+  transform: none;
+}
+
+/* ==========================================================================
+   Opening: the seal peels away, then gates / envelope / curtain / fade reveal.
+   ========================================================================== */
+.opening {
+  position: fixed;
+  inset: 0;
+  z-index: 8;
+  overflow: hidden;
+  perspective: 1600px;
+}
+
+.opening.is-revealing {
+  pointer-events: none;
+}
+
+/* Gates */
+.gate {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50.2%;
+  transition: transform 1250ms cubic-bezier(0.72, 0, 0.24, 1);
+}
+
+.gate.left {
+  left: 0;
+  transform-origin: left center;
+  box-shadow: inset -30px 0 34px -26px var(--seam);
+}
+
+.gate.right {
+  right: 0;
+  transform-origin: right center;
+  box-shadow: inset 30px 0 34px -26px var(--seam);
+}
+
+.gate-line {
+  position: absolute;
+  inset: 16px 14px;
+  border: 1px solid var(--iv-line);
+}
+
+.gate.left .gate-line {
+  right: 10px;
+}
+
+.gate.right .gate-line {
+  left: 10px;
+}
+
+.gate-seam {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: var(--seam);
+  transition: opacity 300ms ease;
+}
+
+.is-revealing .gate.left {
+  transform: translateX(-102%) rotateY(14deg);
+}
+
+.is-revealing .gate.right {
+  transform: translateX(102%) rotateY(-14deg);
+}
+
+.is-revealing .gate-seam {
+  opacity: 0;
+}
+
+/* Plain cover (fade) */
+.cover-plain {
+  position: absolute;
+  inset: 0;
+}
+
+.anim-fade.is-revealing .cover-plain {
+  animation: cover-out 900ms ease forwards;
+}
+
+@keyframes cover-out {
+  to {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+}
+
+/* Envelope: the whole screen is a vertical envelope. The flap's point sits under the seal (centre). */
+.env-full,
+.env-front {
+  position: absolute;
+  inset: 0;
+  perspective: 1400px;
+}
+
+/* The invitation card inside the envelope: a little smaller than the screen and lower down, so its top shows in
+   the opening once the flap lifts while the pocket hides the rest. */
+.env-card {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 10px;
+  transform: translateY(6%) scale(0.86);
+  transform-origin: 50% 0;
+  box-shadow: 0 12px 30px -14px rgba(0, 0, 0, 0.4);
+}
+
+.env-card > .iv-hero {
+  height: 100%;
+}
+
+/* The card and (with the envelope) the real cover show the finished cover: no staged entrance. */
+.env-card .hero-step,
+.cover-ready .iv-hero .hero-step {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition: none;
+}
+
+.env-card .iv-art,
+.cover-ready .iv-hero .iv-art {
+  transform: none;
+  transition: none;
+}
+
+.env-inside,
+.env-body {
+  position: absolute;
+  inset: 0;
+}
+
+.env-inside {
+  box-shadow: inset 0 40px 60px -40px rgba(0, 0, 0, 0.25);
+}
+
+.env-body {
+  /* The front pocket: everything below the two folds rising from the bottom corners to the centre. */
+  clip-path: polygon(0 0, 50% 52%, 100% 0, 100% 100%, 0 100%);
+  filter: brightness(0.97);
+}
+
+.env-folds {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.env-flap-wrap {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 52%;
+  transform-origin: top center;
+  transform-style: preserve-3d;
+  filter: drop-shadow(0 6px 10px var(--seam));
+  transition: transform 800ms cubic-bezier(0.55, 0, 0.3, 1);
+}
+
+.env-flap {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  box-shadow: inset 0 -30px 40px -30px var(--seam);
+}
+
+/* After the seal is peeled: the flap swings up and over, then the envelope slides away downwards. */
+.anim-envelope.is-revealing .env-flap-wrap {
+  transform: rotateX(178deg);
+}
+
+/* Then the pocket drops away while the card rises and grows to fill the screen. The inside of the envelope
+   stays put behind the card, so the real cover is never seen doubled under the growing card. */
+.anim-envelope.is-revealing .env-front {
+  animation: env-away 800ms cubic-bezier(0.6, 0, 0.4, 1) 750ms forwards;
+}
+
+.anim-envelope.is-revealing .env-card {
+  animation: card-rise 950ms cubic-bezier(0.5, 0, 0.2, 1) 700ms forwards;
+}
+
+@keyframes card-rise {
+  to {
+    transform: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+/* Slides down while fading, so the opened flap never sits over the invitation. */
+@keyframes env-away {
+  to {
+    transform: translateY(60%);
+    opacity: 0;
+  }
+}
+
+/* Curtain */
+.drape {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 52%;
+  background-color: var(--iv-accent);
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.28)),
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.2) 0 8px,
+      rgba(255, 255, 255, 0.1) 8px 24px,
+      rgba(0, 0, 0, 0.12) 24px 34px
+    );
+  transition: transform 1350ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.drape.left {
+  left: 0;
+  transform-origin: top left;
+}
+
+.drape.right {
+  right: 0;
+  transform-origin: top right;
+}
+
+.drape-valance {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 54px;
+  background: color-mix(in srgb, var(--iv-accent) 80%, #000);
+  -webkit-mask: radial-gradient(18px at 18px 100%, transparent 98%, #000) -18px 0 / 36px 100% repeat-x;
+  mask: radial-gradient(18px at 18px 100%, transparent 98%, #000) -18px 0 / 36px 100% repeat-x;
+  transition: transform 900ms ease 300ms;
+}
+
+.anim-curtain.is-revealing .drape.left {
+  transform: translateX(-82%) scaleX(0.4) skewY(5deg);
+}
+
+.anim-curtain.is-revealing .drape.right {
+  transform: translateX(82%) scaleX(0.4) skewY(-5deg);
+}
+
+.anim-curtain.is-revealing .drape-valance {
+  transform: translateY(-100%);
+}
+
+/* ---------- The seal and its peel ---------- */
+.peel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 5;
+}
+
+.peel-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.28));
+}
+
+.peel-frame.is-breathing {
+  animation: breathe 2.4s ease-in-out 2;
+}
+
+@keyframes breathe {
+  50% {
+    scale: 0.965;
+  }
+}
+
+.peel-front,
+.peel-back {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.peel-frame {
+  perspective: 520px;
+}
+
+/* A soft shadow on the seal where the flap lifts off it. */
+.peel-shadow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.peel-upright,
+.seal-face {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.seal-letter {
+  font-family: var(--iv-font-names);
+  font-size: 50px;
+  text-transform: uppercase;
+}
+
+.theme-champagne .seal-letter,
+.theme-midnight .seal-letter {
+  font-family: var(--iv-font-heading);
+  font-size: 54px;
+}
+
+.seal-label {
+  font: 600 11px var(--iv-font-body);
+  letter-spacing: 5px;
+}
+
+.peel-button {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* ---------- Reduced motion: no movement, just show things. ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .hero-step,
+  .reveal,
+  .iv-dock,
+  .iv-art {
+    transition: none !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .iv-sheet,
+  .is-leaving .iv-sheet,
+  .iv-sheet-layer::before,
+  .iv-music-btn .iv-disc,
+  .peel-frame.is-breathing,
+  .moon-glow,
+  .moon-halo {
+    animation: none;
+  }
+}
+
+/* ---------- RSVP, wishes and gift ---------- */
+.iv-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 6px;
+  text-align: left;
+}
+
+.iv-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.iv-field > span,
+.iv-field > legend {
+  padding: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--iv-muted);
+}
+
+.iv-field input,
+.iv-field select,
+.iv-field textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--iv-line);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--iv-bg) 70%, #fff);
+  color: var(--iv-ink);
+  font: 16px/1.4 var(--iv-font-body); /* 16px stops iPhones zooming in */
+}
+
+.is-dark .iv-field input,
+.is-dark .iv-field select,
+.is-dark .iv-field textarea {
+  background: color-mix(in srgb, var(--iv-bg) 80%, #fff 6%);
+}
+
+.iv-field textarea {
+  resize: vertical;
+}
+
+.iv-field input:focus-visible,
+.iv-field select:focus-visible,
+.iv-field textarea:focus-visible,
+.iv-choice label:has(input:focus-visible),
+.iv-check:has(input:focus-visible) {
+  outline: 2px solid var(--iv-accent);
+  outline-offset: 2px;
+}
+
+.iv-choice {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.iv-choice label {
+  display: grid;
+  place-items: center;
+  min-height: 44px;
+  padding: 0 10px;
+  border: 1px solid var(--iv-line);
+  border-radius: 999px;
+  color: var(--iv-ink);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 200ms ease,
+    color 200ms ease,
+    border-color 200ms ease;
+}
+
+.iv-choice label.is-on {
+  border-color: var(--iv-accent);
+  background: var(--iv-accent);
+  color: var(--iv-on-accent);
+}
+
+.iv-choice input,
+.iv-check input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.iv-events-pick {
+  gap: 8px;
+}
+
+.iv-check {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.iv-check::before {
+  content: '';
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--iv-accent);
+  border-radius: 6px;
+}
+
+.iv-check:has(input:checked)::before {
+  background: var(--iv-accent);
+}
+
+/* The tick, drawn in the theme's on-accent colour so it reads on light and dark themes. */
+.iv-check:has(input:checked)::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 50%;
+  width: 6px;
+  height: 11px;
+  border: solid var(--iv-on-accent);
+  border-width: 0 2.2px 2.2px 0;
+  transform: translateY(-62%) rotate(45deg);
+}
+
+.iv-btn-wide {
+  width: 100%;
+  height: 48px;
+  margin-top: 4px;
+}
+
+.iv-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.iv-form-note {
+  text-align: center;
+  line-height: 1.5;
+}
+
+.iv-form-error {
+  color: #b5482f;
+  font-size: 13px;
+  text-align: center;
+}
+
+.is-dark .iv-form-error {
+  color: #f0a48f;
+}
+
+.iv-thanks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 18px 0 8px;
+  text-align: center;
+  animation: iv-fade-in 400ms ease both;
+}
+
+.iv-thanks-mark {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--iv-accent) 14%, transparent);
+  color: var(--iv-accent);
+}
+
+.iv-thanks-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 10px !important;
+  padding: 10px 18px;
+  border: 1px solid var(--iv-line);
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.iv-thanks-summary span {
+  font-weight: 400;
+  color: var(--iv-muted);
+  font-size: 13px;
+}
+
+.iv-thanks .iv-buttons {
+  margin-top: 16px;
+}
+
+.iv-wishes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 420px;
+  margin: 0 0 28px;
+  padding: 2px;
+  list-style: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.iv-wish {
+  padding: 18px 20px;
+  border: 1px solid var(--iv-line);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--iv-glass) 85%, transparent);
+  text-align: left;
+}
+
+.iv-wish.is-mine {
+  border-color: var(--iv-accent);
+  animation: iv-fade-in 500ms ease both;
+}
+
+.iv-wish.is-empty {
+  color: var(--iv-muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+.iv-wish-msg {
+  font-family: var(--iv-font-heading);
+  font-size: 17px;
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.iv-wish-name {
+  margin-top: 10px !important;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--iv-accent);
+}
+
+.iv-gift-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 24px;
+  padding: 28px 22px;
+  border: 1px solid var(--iv-line);
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--iv-glass) 90%, transparent);
+  color: var(--iv-accent);
+}
+
+.iv-gift-bank {
+  margin-top: 6px !important;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--iv-muted);
+}
+
+.iv-gift-account {
+  font-family: var(--iv-font-heading);
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--iv-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.iv-gift-holder {
+  margin-bottom: 10px !important;
+  font-size: 14px;
+  color: var(--iv-ink);
+}
+
+.iv-gift-qr {
+  margin: 18px 0 0;
+}
+
+.iv-gift-qr img {
+  display: block;
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  padding: 10px;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.iv-gift-qr figcaption {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--iv-muted);
+}
+
+/* ---------- Senarai Hadiah (wish list) ---------- */
+.iv-registry {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.iv-registry-item {
+  padding: 16px 18px;
+  border: 1px solid var(--iv-line);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--iv-glass) 85%, transparent);
+}
+
+.iv-registry-item.is-taken {
+  opacity: 0.62;
+}
+
+.iv-registry-item.is-mine {
+  border-color: var(--iv-accent);
+}
+
+.iv-registry-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.iv-registry-name {
+  font-family: var(--iv-font-heading);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.iv-registry-price {
+  font-size: 13px;
+  color: var(--iv-muted);
+}
+
+.iv-btn-small {
+  flex: none;
+  height: 36px;
+  padding: 0 14px;
+  font-size: 12px;
+}
+
+.iv-registry-taken {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--iv-accent);
+}
+
+.iv-registry-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--iv-accent);
+}
+
+.iv-registry-form {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--iv-line);
+}
+
+.iv-registry-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.iv-registry-actions .iv-btn-solid {
+  margin-top: 0;
+}
+
+.iv-registry-thanks {
+  margin-top: 8px !important;
+  font-size: 13px;
+  color: var(--iv-accent);
+}
+
+/* ---------- Hadiah sheet: salam kaut + wish list ---------- */
+.iv-sheet-block {
+  padding: 14px 0 22px;
+  text-align: center;
+}
+
+.iv-sheet-block + .iv-sheet-block {
+  border-top: 1px solid var(--iv-line);
+  padding-top: 22px;
+}
+
+.iv-sheet-sub {
+  margin: 0 0 6px;
+  font-family: var(--iv-font-heading);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--iv-accent);
+}
+
+.iv-sheet-block .iv-gift-card {
+  margin-top: 16px;
+}
+
+.iv-gift-note {
+  margin-top: 12px !important;
+}
+
+.iv-sheet-block .iv-registry {
+  margin-top: 16px;
+}
