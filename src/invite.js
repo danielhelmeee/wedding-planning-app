@@ -6,6 +6,9 @@ import { whatsappHref } from './contact.js'
 
 export const WORDS = {
   ms: {
+    previewReplyNotice: 'Ini pratonton sahaja. Jawapan disimpan pada peranti ini dan tidak dihantar kepada pasangan.',
+    previewGiftNotice: 'Tempahan pratonton hanya disimpan pada peranti ini. Hubungi pasangan untuk mengesahkan hadiah sebelum membeli.',
+    previewReplySaved: 'Jawapan pratonton disimpan pada peranti ini. Pasangan belum dimaklumkan. Hantar melalui WhatsApp jika tersedia.',
     title: 'Walimatul Urus',
     opening:
       'Dengan penuh kesyukuran ke hadrat Ilahi, kami mempersilakan Tuan / Puan / Encik / Cik seisi keluarga ke majlis perkahwinan anakanda kami',
@@ -92,6 +95,9 @@ export const WORDS = {
     noContacts: 'Tiada nombor untuk dihubungi.',
   },
   en: {
+    previewReplyNotice: 'Preview only. Replies are saved on this device and are not sent to the couple.',
+    previewGiftNotice: 'Preview reservations are saved on this device only. Contact the couple to confirm your gift before buying it.',
+    previewReplySaved: 'Preview reply saved on this device. The couple has not been notified. Send it via WhatsApp if available.',
     title: 'Wedding Invitation',
     opening: 'With gratitude to Allah, we warmly invite you and your family to the wedding of our beloved children',
     closing: 'Your presence and prayers would mean the world to us.',

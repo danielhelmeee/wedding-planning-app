@@ -9,6 +9,15 @@ import { deleteImage } from './media.js'
 
 const VENDORS_KEY = 'wvt.vendors'
 const SETTINGS_KEY = 'wvt.settings'
+const failedWrites = new Map()
+export const hasSaveFailures = () => failedWrites.size > 0
+export function retryFailedWrites() {
+  for (const [key, value] of failedWrites) write(key, value)
+}
+export function subscribeToSaveStatus(listener) {
+  window.addEventListener('restu-save-status', listener)
+  return () => window.removeEventListener('restu-save-status', listener)
+}
 
 // Missing key → null; broken JSON → undefined.
 function read(key) {
@@ -21,10 +30,16 @@ function read(key) {
 }
 
 function write(key, value) {
+  const wasFailing = hasSaveFailures()
   try {
     localStorage.setItem(key, JSON.stringify(value))
+    failedWrites.delete(key)
   } catch {
-    // Storage full or blocked: keep working in memory.
+    // Keep working in memory, but tell the couple their changes have not been saved.
+    failedWrites.set(key, value)
+  }
+  if (hasSaveFailures() !== wasFailing) {
+    window.dispatchEvent(new Event('restu-save-status'))
   }
 }
 

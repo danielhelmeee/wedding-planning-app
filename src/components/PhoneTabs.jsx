@@ -6,13 +6,14 @@ const TABS = [
   { page: 'invite', href: '#/invite', label: 'E-invite', icon: 'M3.5 6.5h17v12h-17zM3.5 7l8.5 6.5L20.5 7' },
 ]
 
-export default function PhoneTabs({ page, menuOpen, onMore }) {
+export default function PhoneTabs({ page, menuOpen, onNavigate, onMore }) {
+  const moreActive = menuOpen || !TABS.some((tab) => tab.page === page)
   return (
     <nav className="phone-tabs" aria-label="Quick menu">
       {TABS.map((t) => {
         const active = page === t.page && !menuOpen
         return (
-          <a key={t.page} href={t.href} className={`phone-tab${active ? ' is-active' : ''}`} aria-current={active ? 'page' : undefined}>
+          <a key={t.page} href={t.href} onClick={onNavigate} className={`phone-tab${active ? ' is-active' : ''}`} aria-current={active ? 'page' : undefined}>
             <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
               <path d={t.icon} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -20,7 +21,7 @@ export default function PhoneTabs({ page, menuOpen, onMore }) {
           </a>
         )
       })}
-      <button type="button" className={`phone-tab${menuOpen ? ' is-active' : ''}`} aria-expanded={menuOpen} aria-controls="sidebar" onClick={onMore}>
+      <button type="button" className={`phone-tab${moreActive ? ' is-active' : ''}`} aria-expanded={menuOpen} aria-controls="sidebar" onClick={onMore}>
         <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M5 12h.01M12 12h.01M19 12h.01" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
         </svg>

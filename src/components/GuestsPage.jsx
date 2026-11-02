@@ -59,6 +59,7 @@ export default function GuestsPage({
   const [query, setQuery] = useState('')
   const [group, setGroup] = useState('all')
   const [sort, setSort] = useState('name')
+  const [filtersOpen, setFiltersOpen] = useState(false)
   // Which form is open and where: { mode: 'one' | 'import', at: 'top' | 'bottom' }, or null.
   const [adding, setAdding] = useState(null)
 
@@ -180,44 +181,55 @@ export default function GuestsPage({
           ))}
         </nav>
         <div className="guest-filters">
-          <div className="field">
-            <label htmlFor="guest-side">Side</label>
-            <select id="guest-side" value={side} onChange={(e) => smooth(() => setSide(e.target.value))}>
-              <option value="all">All guests</option>
-              {SIDES.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="field">
-            <label htmlFor="guest-group">Group</label>
-            <select id="guest-group" value={group} onChange={(e) => smooth(() => setGroup(e.target.value))}>
-              <option value="all">All groups</option>
-              {groupsInUse.map((x) => (
-                <option key={x}>{x}</option>
-              ))}
-            </select>
-          </div>
-          <div className="field">
-            <label htmlFor="guest-sort">Sort</label>
-            <select id="guest-sort" value={sort} onChange={(e) => smooth(() => setSort(e.target.value))}>
-              <option value="name">Name A–Z</option>
-              <option value="side">Side and group</option>
-              <option value="people">Most people first</option>
-              <option value="replied">Latest replies first</option>
-            </select>
-          </div>
           <div className="field guest-search">
             <label htmlFor="guest-search">Search</label>
             <input
               id="guest-search"
               type="search"
-              placeholder="Name, group or phone"
+              placeholder="Name or phone"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
+          </div>
+          <button
+            type="button"
+            className="btn-secondary guest-filter-toggle"
+            aria-expanded={filtersOpen}
+            aria-controls="guest-filter-options"
+            onClick={() => setFiltersOpen((open) => !open)}
+          >
+            Filters{side !== 'all' || group !== 'all' || sort !== 'name' ? ' •' : ''}
+          </button>
+          <div id="guest-filter-options" className={`guest-filter-options${filtersOpen ? ' is-open' : ''}`}>
+            <div className="field">
+              <label htmlFor="guest-side">Side</label>
+              <select id="guest-side" value={side} onChange={(e) => smooth(() => setSide(e.target.value))}>
+                <option value="all">All guests</option>
+                {SIDES.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="field">
+              <label htmlFor="guest-group">Group</label>
+              <select id="guest-group" value={group} onChange={(e) => smooth(() => setGroup(e.target.value))}>
+                <option value="all">All groups</option>
+                {groupsInUse.map((x) => (
+                  <option key={x}>{x}</option>
+                ))}
+              </select>
+            </div>
+            <div className="field">
+              <label htmlFor="guest-sort">Sort</label>
+              <select id="guest-sort" value={sort} onChange={(e) => smooth(() => setSort(e.target.value))}>
+                <option value="name">Name A–Z</option>
+                <option value="side">Side and group</option>
+                <option value="people">Most people first</option>
+                <option value="replied">Latest replies first</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { STAGES } from '../data/stages.js'
 import { CATEGORY_BY_ID } from '../data/categories.js'
 import { EMPTY_DETAILS } from '../data/sampleVendors.js'
 import { autofill } from '../autofill.js'
+import { focusInvalid } from '../formFocus.js'
 
 const EMPTY = {
   ...EMPTY_DETAILS,
@@ -90,6 +91,7 @@ export default function VendorForm({ category, categories, events, defaultEvents
     }
     if (Object.keys(nextErrors).length) {
       setErrors(nextErrors)
+      focusInvalid(e.currentTarget)
       return
     }
     // Events switched off in Settings stay on the vendor, so switching them back on restores them.
@@ -241,7 +243,7 @@ export default function VendorForm({ category, categories, events, defaultEvents
       </div>
 
       {events.length > 0 && (
-        <fieldset className="event-picks" aria-describedby={errors.events ? `${id}-events-error` : undefined}>
+        <fieldset className="event-picks" aria-invalid={Boolean(errors.events)} aria-describedby={errors.events ? `${id}-events-error` : undefined}>
           <legend>For which events?</legend>
           <div className="event-pick-list">
             {events.map((ev) => (

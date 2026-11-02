@@ -1,0 +1,578 @@
+{
+  "date": "2026-11-02",
+  "environment": "Isolated Chrome mobile emulation; sample data only",
+  "layout": [
+    {
+      "route": "home",
+      "requestedWidth": 320,
+      "viewportWidth": 320,
+      "documentWidth": 320
+    },
+    {
+      "route": "procedure",
+      "requestedWidth": 320,
+      "viewportWidth": 320,
+      "documentWidth": 320
+    },
+    {
+      "route": "budget",
+      "requestedWidth": 320,
+      "viewportWidth": 320,
+      "documentWidth": 320
+    },
+    {
+      "route": "checklist",
+      "requestedWidth": 320,
+      "viewportWidth": 320,
+      "documentWidth": 320
+    },
+    {
+      "route": "calendar",
+      "requestedWidth": 320,
+      "viewportWidth": 320,
+      "documentWidth": 320
+    },
+    {
+      "route": "day",
+      "requestedWidth": 320,
+      "viewportWidth": 320,
+      "documentWidth": 320
+    },
+    {
+      "route": "guests",
+      "requestedWidth": 320,
+      "viewportWidth": 320,
+      "documentWidth": 320
+    },
+    {
+      "route": "seating",
+      "requestedWidth": 320,
+      "viewportWidth": 320,
+      "documentWidth": 320
+    },
+    {
+      "route": "invite",
+      "requestedWidth": 320,
+      "viewportWidth": 320,
+      "documentWidth": 320
+    },
+    {
+      "route": "invite/preview",
+      "requestedWidth": 320,
+      "viewportWidth": 320,
+      "documentWidth": 320
+    },
+    {
+      "route": "gifts",
+      "requestedWidth": 320,
+      "viewportWidth": 320,
+      "documentWidth": 320
+    },
+    {
+      "route": "gifts/wishlist",
+      "requestedWidth": 320,
+      "viewportWidth": 320,
+      "documentWidth": 320
+    },
+    {
+      "route": "settings",
+      "requestedWidth": 320,
+      "viewportWidth": 320,
+      "documentWidth": 320
+    },
+    {
+      "route": "vendors/venue",
+      "requestedWidth": 320,
+      "viewportWidth": 320,
+      "documentWidth": 320
+    },
+    {
+      "route": "vendors/photo",
+      "requestedWidth": 320,
+      "viewportWidth": 320,
+      "documentWidth": 320
+    },
+    {
+      "route": "home",
+      "requestedWidth": 390,
+      "viewportWidth": 390,
+      "documentWidth": 390
+    },
+    {
+      "route": "procedure",
+      "requestedWidth": 390,
+      "viewportWidth": 390,
+      "documentWidth": 390
+    },
+    {
+      "route": "budget",
+      "requestedWidth": 390,
+      "viewportWidth": 390,
+      "documentWidth": 390
+    },
+    {
+      "route": "checklist",
+      "requestedWidth": 390,
+      "viewportWidth": 390,
+      "documentWidth": 390
+    },
+    {
+      "route": "calendar",
+      "requestedWidth": 390,
+      "viewportWidth": 390,
+      "documentWidth": 390
+    },
+    {
+      "route": "day",
+      "requestedWidth": 390,
+      "viewportWidth": 390,
+      "documentWidth": 390
+    },
+    {
+      "route": "guests",
+      "requestedWidth": 390,
+      "viewportWidth": 390,
+      "documentWidth": 390
+    },
+    {
+      "route": "seating",
+      "requestedWidth": 390,
+      "viewportWidth": 390,
+      "documentWidth": 390
+    },
+    {
+      "route": "invite",
+      "requestedWidth": 390,
+      "viewportWidth": 390,
+      "documentWidth": 390
+    },
+    {
+      "route": "invite/preview",
+      "requestedWidth": 390,
+      "viewportWidth": 390,
+      "documentWidth": 390
+    },
+    {
+      "route": "gifts",
+      "requestedWidth": 390,
+      "viewportWidth": 390,
+      "documentWidth": 390
+    },
+    {
+      "route": "gifts/wishlist",
+      "requestedWidth": 390,
+      "viewportWidth": 390,
+      "documentWidth": 390
+    },
+    {
+      "route": "settings",
+      "requestedWidth": 390,
+      "viewportWidth": 390,
+      "documentWidth": 390
+    },
+    {
+      "route": "vendors/venue",
+      "requestedWidth": 390,
+      "viewportWidth": 390,
+      "documentWidth": 390
+    },
+    {
+      "route": "vendors/photo",
+      "requestedWidth": 390,
+      "viewportWidth": 390,
+      "documentWidth": 390
+    },
+    {
+      "route": "home",
+      "requestedWidth": 430,
+      "viewportWidth": 430,
+      "documentWidth": 430
+    },
+    {
+      "route": "procedure",
+      "requestedWidth": 430,
+      "viewportWidth": 430,
+      "documentWidth": 430
+    },
+    {
+      "route": "budget",
+      "requestedWidth": 430,
+      "viewportWidth": 430,
+      "documentWidth": 430
+    },
+    {
+      "route": "checklist",
+      "requestedWidth": 430,
+      "viewportWidth": 430,
+      "documentWidth": 430
+    },
+    {
+      "route": "calendar",
+      "requestedWidth": 430,
+      "viewportWidth": 430,
+      "documentWidth": 430
+    },
+    {
+      "route": "day",
+      "requestedWidth": 430,
+      "viewportWidth": 430,
+      "documentWidth": 430
+    },
+    {
+      "route": "guests",
+      "requestedWidth": 430,
+      "viewportWidth": 430,
+      "documentWidth": 430
+    },
+    {
+      "route": "seating",
+      "requestedWidth": 430,
+      "viewportWidth": 430,
+      "documentWidth": 430
+    },
+    {
+      "route": "invite",
+      "requestedWidth": 430,
+      "viewportWidth": 430,
+      "documentWidth": 430
+    },
+    {
+      "route": "invite/preview",
+      "requestedWidth": 430,
+      "viewportWidth": 430,
+      "documentWidth": 430
+    },
+    {
+      "route": "gifts",
+      "requestedWidth": 430,
+      "viewportWidth": 430,
+      "documentWidth": 430
+    },
+    {
+      "route": "gifts/wishlist",
+      "requestedWidth": 430,
+      "viewportWidth": 430,
+      "documentWidth": 430
+    },
+    {
+      "route": "settings",
+      "requestedWidth": 430,
+      "viewportWidth": 430,
+      "documentWidth": 430
+    },
+    {
+      "route": "vendors/venue",
+      "requestedWidth": 430,
+      "viewportWidth": 430,
+      "documentWidth": 430
+    },
+    {
+      "route": "vendors/photo",
+      "requestedWidth": 430,
+      "viewportWidth": 430,
+      "documentWidth": 430
+    },
+    {
+      "route": "home",
+      "requestedWidth": 768,
+      "viewportWidth": 768,
+      "documentWidth": 768
+    },
+    {
+      "route": "procedure",
+      "requestedWidth": 768,
+      "viewportWidth": 768,
+      "documentWidth": 768
+    },
+    {
+      "route": "budget",
+      "requestedWidth": 768,
+      "viewportWidth": 768,
+      "documentWidth": 768
+    },
+    {
+      "route": "checklist",
+      "requestedWidth": 768,
+      "viewportWidth": 768,
+      "documentWidth": 768
+    },
+    {
+      "route": "calendar",
+      "requestedWidth": 768,
+      "viewportWidth": 768,
+      "documentWidth": 768
+    },
+    {
+      "route": "day",
+      "requestedWidth": 768,
+      "viewportWidth": 768,
+      "documentWidth": 768
+    },
+    {
+      "route": "guests",
+      "requestedWidth": 768,
+      "viewportWidth": 768,
+      "documentWidth": 768
+    },
+    {
+      "route": "seating",
+      "requestedWidth": 768,
+      "viewportWidth": 768,
+      "documentWidth": 768
+    },
+    {
+      "route": "invite",
+      "requestedWidth": 768,
+      "viewportWidth": 768,
+      "documentWidth": 768
+    },
+    {
+      "route": "invite/preview",
+      "requestedWidth": 768,
+      "viewportWidth": 768,
+      "documentWidth": 768
+    },
+    {
+      "route": "gifts",
+      "requestedWidth": 768,
+      "viewportWidth": 768,
+      "documentWidth": 768
+    },
+    {
+      "route": "gifts/wishlist",
+      "requestedWidth": 768,
+      "viewportWidth": 768,
+      "documentWidth": 768
+    },
+    {
+      "route": "settings",
+      "requestedWidth": 768,
+      "viewportWidth": 768,
+      "documentWidth": 768
+    },
+    {
+      "route": "vendors/venue",
+      "requestedWidth": 768,
+      "viewportWidth": 768,
+      "documentWidth": 768
+    },
+    {
+      "route": "vendors/photo",
+      "requestedWidth": 768,
+      "viewportWidth": 768,
+      "documentWidth": 768
+    },
+    {
+      "route": "home",
+      "requestedWidth": 1280,
+      "viewportWidth": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "route": "procedure",
+      "requestedWidth": 1280,
+      "viewportWidth": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "route": "budget",
+      "requestedWidth": 1280,
+      "viewportWidth": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "route": "checklist",
+      "requestedWidth": 1280,
+      "viewportWidth": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "route": "calendar",
+      "requestedWidth": 1280,
+      "viewportWidth": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "route": "day",
+      "requestedWidth": 1280,
+      "viewportWidth": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "route": "guests",
+      "requestedWidth": 1280,
+      "viewportWidth": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "route": "seating",
+      "requestedWidth": 1280,
+      "viewportWidth": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "route": "invite",
+      "requestedWidth": 1280,
+      "viewportWidth": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "route": "invite/preview",
+      "requestedWidth": 1280,
+      "viewportWidth": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "route": "gifts",
+      "requestedWidth": 1280,
+      "viewportWidth": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "route": "gifts/wishlist",
+      "requestedWidth": 1280,
+      "viewportWidth": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "route": "settings",
+      "requestedWidth": 1280,
+      "viewportWidth": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "route": "vendors/venue",
+      "requestedWidth": 1280,
+      "viewportWidth": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "route": "vendors/photo",
+      "requestedWidth": 1280,
+      "viewportWidth": 1280,
+      "documentWidth": 1280
+    }
+  ],
+  "functional": {
+    "results": [
+      {
+        "name": "Guest filters open",
+        "ok": true
+      },
+      {
+        "name": "Sort selection stays readable",
+        "ok": true
+      },
+      {
+        "name": "Escape dismisses menu and restores background",
+        "ok": true
+      },
+      {
+        "name": "Guest delete can be undone",
+        "ok": true
+      },
+      {
+        "name": "Wish-list item saves",
+        "ok": true
+      },
+      {
+        "name": "Calendar view 1 fits",
+        "ok": true
+      },
+      {
+        "name": "Calendar view 2 fits",
+        "ok": true
+      },
+      {
+        "name": "Calendar view 3 fits",
+        "ok": true
+      },
+      {
+        "name": "Calendar view 4 fits",
+        "ok": true
+      },
+      {
+        "name": "Tables view is the phone default",
+        "ok": true
+      },
+      {
+        "name": "Guest party assigned to table",
+        "ok": true
+      },
+      {
+        "name": "Floor plan remains available",
+        "ok": true
+      },
+      {
+        "name": "Floor plan scroll stays inside its card",
+        "ok": true
+      },
+      {
+        "name": "RSVP validation focuses the first missing field",
+        "ok": true
+      },
+      {
+        "name": "RSVP updates the local guest list",
+        "ok": true
+      },
+      {
+        "name": "RSVP explains preview-only delivery",
+        "ok": true
+      },
+      {
+        "name": "Dialog keeps keyboard focus inside",
+        "ok": true
+      },
+      {
+        "name": "Dialog closes and releases scrolling",
+        "ok": true
+      },
+      {
+        "name": "Blocked storage shows an actionable warning",
+        "ok": true
+      },
+      {
+        "name": "Retry saves the current values and clears warning",
+        "ok": true
+      },
+      {
+        "name": "Saved values survive a reload",
+        "ok": true
+      },
+      {
+        "name": "Setup completes and removes samples",
+        "ok": true
+      },
+      {
+        "name": "Setup retains the couple names",
+        "ok": true
+      },
+      {
+        "name": "Fresh guest list has a working add action",
+        "ok": true
+      },
+      {
+        "name": "Empty-state guest form fits",
+        "ok": true
+      }
+    ],
+    "errors": []
+  },
+  "targeted": {
+    "results": [
+      {
+        "name": "Clipboard denial exposes a copyable message",
+        "ok": true
+      },
+      {
+        "name": "Landscape RSVP sheet fits and scrolls",
+        "ok": true
+      },
+      {
+        "name": "Desktop navigation and filters remain visible",
+        "ok": true
+      }
+    ],
+    "errors": []
+  }
+}

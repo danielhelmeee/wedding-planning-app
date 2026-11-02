@@ -8,6 +8,7 @@ import { todayISO } from '../dates.js'
 import { hrefFor } from '../useHashRoute.js'
 import AddLine from './AddLine.jsx'
 import { smooth } from '../motion.js'
+import { focusInvalid } from '../formFocus.js'
 
 const newId = (prefix) => `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
 const toNumber = (v) => Math.max(0, Number(String(v).replace(/[^\d.]/g, '')) || 0)
@@ -34,7 +35,11 @@ function GiftForm({ gift, guests, events, onSubmit, onCancel }) {
     const next = {}
     if (!v.from.trim()) next.from = 'Who is it from?'
     if (!present && !toNumber(v.amount)) next.amount = 'Enter the amount in RM.'
-    if (Object.keys(next).length) return setErrors(next)
+    if (Object.keys(next).length) {
+      setErrors(next)
+      focusInvalid(e.currentTarget)
+      return
+    }
     const from = v.from.trim()
     // Linked to a guest when the name is exactly one on the guest list.
     const guest = guests.find((g) => g.name.toLowerCase() === from.toLowerCase())
@@ -200,7 +205,11 @@ function ItemForm({ item, onSubmit, onCancel }) {
   }
   function submit(e) {
     e.preventDefault()
-    if (!v.name.trim()) return setError('Name the item.')
+    if (!v.name.trim()) {
+      setError('Name the item.')
+      focusInvalid(e.currentTarget)
+      return
+    }
     onSubmit({ ...v, name: v.name.trim(), price: toNumber(v.price), link: v.link.trim(), note: v.note.trim() })
   }
   return (
@@ -536,8 +545,8 @@ export default function GiftsPage({ tab, gifts, guests, events, invite, onChange
           {counts.reserved} reserved · {counts.received} received · {counts.open} available.{' '}
           {invite.registry?.show ? (
             <>
-              Shown on your invitation under &ldquo;Hadiah&rdquo; in the bottom menu: guests reserve an item with their
-              name and phone number, so two people don&apos;t buy the same thing.{' '}
+              Shown in the invitation preview under &ldquo;Hadiah&rdquo;. Reservations are saved in this browser;
+              guests on other devices cannot see or update this list yet.{' '}
               <a href="#/invite">Change in E-invite</a>.
             </>
           ) : (

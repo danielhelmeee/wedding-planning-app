@@ -5,6 +5,7 @@ import { formatDate, formatRM } from '../figures.js'
 import { SAMPLE_SETTINGS } from '../data/sampleVendors.js'
 import { smooth } from '../motion.js'
 import BrandMark from './BrandMark.jsx'
+import { useModalFocus } from '../useModalFocus.js'
 
 const STEPS = ['Names', 'Events', 'Budget', 'Categories', 'Sample data']
 const clean = (name) => (/^sample\s/i.test(name || '') ? '' : name || '')
@@ -32,6 +33,8 @@ export default function SetupWizard({ settings, invite, samples, again = false, 
   const [removeSamples, setRemoveSamples] = useState(false)
   const [error, setError] = useState('')
   const heading = useRef(null)
+  const dialog = useRef(null)
+  useModalFocus(dialog, again ? onClose : undefined)
 
   // Move focus to each step's heading so screen readers hear the new step.
   useEffect(() => {
@@ -67,7 +70,7 @@ export default function SetupWizard({ settings, invite, samples, again = false, 
   }
 
   return (
-    <div className="wizard" role="dialog" aria-modal="true" aria-labelledby={`${id}-title`}>
+    <div className="wizard" ref={dialog} role="dialog" aria-modal="true" aria-labelledby={`${id}-title`}>
       <div className="wizard-card">
         {step === 0 ? (
           <div className="wizard-welcome">

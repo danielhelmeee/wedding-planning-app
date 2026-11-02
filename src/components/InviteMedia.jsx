@@ -72,7 +72,7 @@ export default function InviteMedia({ media, onChange }) {
     <section className="invite-section">
       <h2>Photo gallery</h2>
       <p className="field-hint">
-        Photos are resized and kept in this browser only (they go online with the invitation in Build & Ship).
+        Photos are resized and saved on this device. They are not included in backups or shared with guests on other devices.
       </p>
       {error && (
         <p className="field-error" role="alert">

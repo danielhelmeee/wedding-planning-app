@@ -1,4 +1,5 @@
 import { useId, useState } from 'react'
+import { focusInvalid } from '../formFocus.js'
 
 // `inline` drops the surface, for use inside an existing list (the Calendar's day lists).
 export default function AddTaskForm({ categories, defaultCategory = '', defaultDate = '', inline = false, onAdd, onCancel }) {
@@ -12,6 +13,7 @@ export default function AddTaskForm({ categories, defaultCategory = '', defaultD
     e.preventDefault()
     if (!title.trim()) {
       setError('Give the task a name.')
+      focusInvalid(e.currentTarget)
       return
     }
     onAdd({ id: `t_${Date.now()}`, title: title.trim(), dueDate, category, done: false })
@@ -34,8 +36,9 @@ export default function AddTaskForm({ categories, defaultCategory = '', defaultD
               setError('')
             }}
             aria-invalid={Boolean(error)}
+            aria-describedby={error ? `${id}-error` : undefined}
           />
-          {error && <p className="field-error">{error}</p>}
+          {error && <p className="field-error" id={`${id}-error`} role="alert">{error}</p>}
         </div>
         <div className="field">
           <label htmlFor={`${id}-due`}>Due date (optional)</label>

@@ -21,6 +21,8 @@ import { whatsappHref } from '../contact.js'
 import { useImage } from '../media.js'
 import { parseYouTube, useYouTubePlayer, youTubeProblem } from '../youtube.js'
 import { phoneKey } from '../rsvp.js'
+import { useModalFocus } from '../useModalFocus.js'
+import { focusInvalid } from '../formFocus.js'
 
 // `target` is a timestamp (ms), so the timer is not restarted by re-renders.
 function useCountdown(target, running) {
@@ -130,6 +132,8 @@ function Sheet({ title, onClose, closing = false, children }) {
   const leaving = leavingSelf || closing
   const closeBtn = useRef(null)
   const close = () => setLeaving(true)
+  const dialog = useRef(null)
+  useModalFocus(dialog, close)
   // Focus the close button without scrolling: autofocus scrolled the page to the still-hidden sheet,
   // which made the content behind it jump.
   useEffect(() => {
@@ -150,6 +154,7 @@ function Sheet({ title, onClose, closing = false, children }) {
     <div className={`iv-sheet-layer${leaving ? ' is-leaving' : ''}`} onClick={close}>
       <section
         className="iv-sheet"
+        ref={dialog}
         role="dialog"
         aria-modal="true"
         aria-labelledby={id}
@@ -183,12 +188,18 @@ function RsvpForm({ invite, events, w, onReply }) {
   const phoneId = useId()
   const noteId = useId()
   const peopleId = useId()
+  const errorId = useId()
 
   function send(e) {
     e.preventDefault()
-    if (!reply.name.trim()) return setProblem(w.nameNeeded)
-    if (!phoneKey(reply.phone)) return setProblem(w.phoneNeeded)
-    if (reply.coming && events.length > 1 && reply.events.length === 0) return setProblem(w.eventNeeded)
+    const error = !reply.name.trim() ? w.nameNeeded
+      : !phoneKey(reply.phone) ? w.phoneNeeded
+      : reply.coming && events.length > 1 && reply.events.length === 0 ? w.eventNeeded : ''
+    if (error) {
+      setProblem(error)
+      focusInvalid(e.currentTarget)
+      return
+    }
     const clean = {
       ...reply,
       name: reply.name.trim(),
@@ -204,6 +215,7 @@ function RsvpForm({ invite, events, w, onReply }) {
     const wa = rsvpHref(invite, w, sent)
     return (
       <div className="iv-thanks" role="status">
+        <p className="iv-preview-note">{w.previewReplySaved}</p>
         <span className="iv-thanks-mark" aria-hidden="true">
           <Icon name="heart" size={26} />
         </span>
@@ -231,6 +243,7 @@ function RsvpForm({ invite, events, w, onReply }) {
 
   return (
     <form className="iv-form" onSubmit={send} noValidate>
+      <p className="iv-preview-note">{w.previewReplyNotice}</p>
       {invite.rsvpBy && (
         <p className="iv-sheet-muted iv-form-note">
           {w.rsvp} {w.rsvpBy} {inviteDate(invite.rsvpBy, invite.language)}
@@ -241,6 +254,8 @@ function RsvpForm({ invite, events, w, onReply }) {
         <input
           id={nameId}
           type="text"
+          aria-invalid={problem === w.nameNeeded}
+          aria-describedby={problem === w.nameNeeded ? errorId : undefined}
           autoComplete="name"
           value={reply.name}
           onChange={(e) => set({ name: e.target.value })}
@@ -251,6 +266,8 @@ function RsvpForm({ invite, events, w, onReply }) {
         <input
           id={phoneId}
           type="tel"
+          aria-invalid={problem === w.phoneNeeded}
+          aria-describedby={problem === w.phoneNeeded ? errorId : undefined}
           autoComplete="tel"
           inputMode="tel"
           placeholder="012-345 6789"
@@ -287,7 +304,7 @@ function RsvpForm({ invite, events, w, onReply }) {
             </select>
           </label>
           {events.length > 1 && (
-            <fieldset className="iv-field iv-events-pick">
+            <fieldset className="iv-field iv-events-pick" aria-invalid={problem === w.eventNeeded} aria-describedby={problem === w.eventNeeded ? errorId : undefined}>
               <legend>{w.whichEvents}</legend>
               {events.map((e) => (
                 <label key={e.id} className="iv-check">
@@ -314,7 +331,7 @@ function RsvpForm({ invite, events, w, onReply }) {
         <textarea id={noteId} rows="2" value={reply.note} onChange={(e) => set({ note: e.target.value })} />
       </label>
       {problem && (
-        <p className="iv-form-error" role="alert">
+        <p className="iv-form-error" id={errorId} role="alert">
           {problem}
         </p>
       )}
@@ -407,6 +424,7 @@ function Registry({ items, w, onReserve, mine, onMine }) {
     <div className="iv-sheet-block">
       <h3 className="iv-sheet-sub">{w.registryTitle}</h3>
       <p className="iv-sheet-muted">{w.registryIntro}</p>
+      <p className="iv-preview-note">{w.previewGiftNotice}</p>
       <ul className="iv-registry">
         {items.map((it) => {
           const taken = !!it.reservedBy || it.received

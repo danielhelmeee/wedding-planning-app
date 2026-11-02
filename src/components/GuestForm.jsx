@@ -1,10 +1,11 @@
 import { useId, useState } from 'react'
 import { DIETARY_SUGGESTIONS, EMPTY_GUEST, GROUPS, RSVP, SIDES } from '../data/guestOptions.js'
+import { focusInvalid } from '../formFocus.js'
 
 export function EventPicks({ id, events, picked, onToggle, error, legend = 'Invited to' }) {
   if (!events.length) return null
   return (
-    <fieldset className="event-picks" aria-describedby={error ? `${id}-events-error` : undefined}>
+    <fieldset className="event-picks" aria-invalid={Boolean(error)} aria-describedby={error ? `${id}-events-error` : undefined}>
       <legend>{legend}</legend>
       <div className="event-pick-list">
         {events.map((ev) => (
@@ -87,6 +88,7 @@ export default function GuestForm({ guest, events, onSubmit, onCancel }) {
     if (events.length && !picked.length) next.events = 'Tick at least one event.'
     if (Object.keys(next).length) {
       setErrors(next)
+      focusInvalid(e.currentTarget)
       return
     }
     const shared = { side: values.side, group: values.group, status: values.status, events: picked }
@@ -113,8 +115,9 @@ export default function GuestForm({ guest, events, onSubmit, onCancel }) {
             value={values.name}
             onChange={set('name')}
             aria-invalid={Boolean(errors.name)}
+            aria-describedby={errors.name ? `${id}-name-error` : undefined}
           />
-          {errors.name && <p className="field-error">{errors.name}</p>}
+          {errors.name && <p className="field-error" id={`${id}-name-error`} role="alert">{errors.name}</p>}
         </div>
         <div className="field">
           <label htmlFor={`${id}-phone`}>Phone / WhatsApp</label>

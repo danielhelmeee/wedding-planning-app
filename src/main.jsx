@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './styles.css'
 import App from './App.jsx'
+import './mobile.css'
 import { installFx } from './fx.js'
 
 installFx()

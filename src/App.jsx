@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import Sidebar, { Brand } from './components/Sidebar.jsx'
 import HomePage from './components/HomePage.jsx'
 import CategoryPage from './components/CategoryPage.jsx'
@@ -8,8 +8,6 @@ import ChecklistPage from './components/ChecklistPage.jsx'
 import CalendarPage from './components/CalendarPage.jsx'
 import GuestsPage from './components/GuestsPage.jsx'
 import SeatingPage from './components/SeatingPage.jsx'
-import InvitePage from './components/InvitePage.jsx'
-import InviteView from './components/InviteView.jsx'
 import GiftsPage from './components/GiftsPage.jsx'
 import SetupWizard from './components/SetupWizard.jsx'
 import Toast from './components/Toast.jsx'
@@ -44,6 +42,9 @@ import {
   saveUi,
   saveSettings,
   saveVendors,
+  hasSaveFailures,
+  subscribeToSaveStatus,
+  retryFailedWrites,
 } from './storage.js'
 import { visibleGuests } from './guests.js'
 import { unassignedTotal } from './seating.js'
@@ -53,6 +54,10 @@ import { sampleCounts, withoutSamples } from './setup.js'
 import { buildChecklist } from './checklist.js'
 import { categoryStats, daysText, enabledEvents, summarise } from './figures.js'
 import { useHashRoute } from './useHashRoute.js'
+
+// Invitation artwork and editing tools are loaded when the couple opens them.
+const InvitePage = lazy(() => import('./components/InvitePage.jsx'))
+const InviteView = lazy(() => import('./components/InviteView.jsx'))
 
 // Three lines (hamburger), or a cross while the menu is open.
 function MenuIcon({ open }) {
@@ -96,6 +101,62 @@ export default function App() {
   const undoable = (text, undo) => setToast({ id: Date.now(), text, undo: () => smooth(undo) })
   const [ui, setUi] = useState(loadUi)
   const route = useHashRoute()
+  const saveFailed = useSyncExternalStore(subscribeToSaveStatus, hasSaveFailures, () => false)
+  const retrySave = () => {
+    retryFailedWrites()
+    saveVendors(vendors)
+    saveSettings(settings)
+    saveChecklist(checklist)
+    saveGuests(guests)
+    saveSeating(seating)
+    saveInvite(invite)
+    saveReplies(replies)
+    saveGifts(gifts)
+    saveProcedure(procedure)
+    saveSetup(setup)
+    saveUi(ui)
+  }
+  const storageNotice = saveFailed && (
+    <div className="storage-warning" role="alert">
+      <p><strong>Your latest changes could not be saved.</strong> Keep this tab open. Allow browser storage or free up space, then retry.</p>
+      <button type="button" className="btn-secondary" onClick={retrySave}>Retry saving</button>
+    </div>
+  )
+  const mainRef = useRef(null)
+  const routeKey = route.page === 'category' ? `${route.page}/${route.category}` : route.page
+  const previousPage = useRef(routeKey)
+
+  // A bottom tab, browser Back, or a sidebar link must all dismiss the drawer.
+  useEffect(() => {
+    const closeMenu = () => setMenuOpen(false)
+    window.addEventListener('hashchange', closeMenu)
+    return () => window.removeEventListener('hashchange', closeMenu)
+  }, [])
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const trigger = document.activeElement
+    const overflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    document.querySelector('#sidebar [aria-current="page"], #sidebar a')?.focus({ preventScroll: true })
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        setMenuOpen(false)
+        trigger?.focus({ preventScroll: true })
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = overflow
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [menuOpen])
+
+  useEffect(() => {
+    if (previousPage.current === routeKey) return
+    previousPage.current = routeKey
+    mainRef.current?.focus({ preventScroll: true })
+  }, [routeKey])
 
   useEffect(() => saveVendors(vendors), [vendors])
   useEffect(() => saveSettings(settings), [settings])
@@ -295,6 +356,8 @@ export default function App() {
   if (page === 'invite-preview') {
     return (
       <div className="invite-full">
+        {storageNotice}
+        <Suspense fallback={<p className="page-loading" role="status">Opening invitation…</p>}>
         <InviteView
           invite={invite}
           settings={settings}
@@ -302,6 +365,7 @@ export default function App() {
           wishlist={gifts.wishlist}
           onReserve={reserveGift}
         />
+        </Suspense>
         <a className="invite-back" href="#/invite">
           ‹ Back to the editor
         </a>
@@ -324,7 +388,7 @@ export default function App() {
     <div className="app">
       {wizardView}
       <Toast toast={toast} onClose={closeToast} />
-      <PhoneTabs page={page} menuOpen={menuOpen} onMore={() => setMenuOpen((o) => !o)} />
+      <PhoneTabs page={page} menuOpen={menuOpen} onNavigate={() => setMenuOpen(false)} onMore={() => setMenuOpen((o) => !o)} />
       <div className="mobile-bar">
         <button
           type="button"
@@ -358,9 +422,11 @@ export default function App() {
       />
 
       <Petals />
-      <main className="main">
+      <main className="main" ref={mainRef} tabIndex={-1} inert={menuOpen || undefined}>
+        {storageNotice}
         {/* Each page rises in as you arrive (keyed by the route so it plays on every visit). */}
         <div className="page-enter" key={page === 'category' ? `category/${route.category}` : page}>
+          <Suspense fallback={<p className="page-loading" role="status">Loading your planner…</p>}>
           {page === 'home' && (
             <HomePage
               summary={summary}
@@ -492,6 +558,7 @@ export default function App() {
               onDelete={deleteVendor}
             />
           )}
+          </Suspense>
         </div>
       </main>
     </div>

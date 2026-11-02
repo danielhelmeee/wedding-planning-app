@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { FLOOR, SHAPES, SHAPE_BY_ID, findSpot, seatPositions, seatingFor, tableSize } from '../seating.js'
 import { headcount } from '../guests.js'
 import { SIDE_BY_ID } from '../data/guestOptions.js'
@@ -238,7 +238,7 @@ function TablePanel({ table, info, onUpdate, onDelete, onSeat, onUnseat, onClose
   return (
     <section className="seat-panel" aria-labelledby={`${id}-title`}>
       <div className="section-head">
-        <h2 id={`${id}-title`}>{table.name}</h2>
+        <h2 id={`${id}-title`} tabIndex={-1}>{table.name}</h2>
         <button type="button" className="btn-text" onClick={onClose}>
           Close
         </button>
@@ -349,6 +349,19 @@ export default function SeatingPage({
   const [draggingId, setDraggingId] = useState(null)
   const [justSeated, setJustSeated] = useState(null) // { id, at }: the table that just got a guest
   const [adding, setAdding] = useState(false)
+  const [message, setMessage] = useState(null) // { text, tone }
+  const [view, setView] = useState(() => window.matchMedia('(max-width: 600px)').matches ? 'tables' : 'floor')
+  const sideRef = useRef(null)
+  const floorRef = useRef(null)
+  useEffect(() => {
+    if (!window.matchMedia('(max-width: 900px)').matches) return
+    if (selectedId) {
+      sideRef.current?.scrollIntoView({ block: 'start' })
+      sideRef.current?.querySelector('h2')?.focus({ preventScroll: true })
+    } else if (pickedId) {
+      floorRef.current?.scrollIntoView({ block: 'start' })
+    }
+  }, [selectedId, pickedId])
   // Event tabs change in place now: start each event with nothing selected and the form closed.
   const [shownTab, setShownTab] = useState(tab)
   if (shownTab !== tab) {
@@ -356,8 +369,8 @@ export default function SeatingPage({
     setSelectedId(null)
     setPickedId(null)
     setAdding(false)
+    setMessage(null)
   }
-  const [message, setMessage] = useState(null) // { text, tone }
 
   if (!event) {
     return (
@@ -386,7 +399,7 @@ export default function SeatingPage({
     }
     onAssign(event.id, guest.id, table.id)
     // A brief golden pulse on the table confirms where they went.
-    setJustSeated({ id: table.id, at: Date.now() })
+    setJustSeated((previous) => ({ id: table.id, at: (previous?.at ?? 0) + 1 }))
     setPickedId(null)
     setMessage({ tone: 'ok', text: `${guest.name} seated at ${table.name}.` })
   }
@@ -459,9 +472,44 @@ export default function SeatingPage({
           </p>
         )}
 
+        {info.tables.length > 0 && (
+          <div className="view-switch seating-views" role="group" aria-label="Seating view">
+            {['tables', 'floor'].map((mode) => (
+              <button type="button" key={mode} className={`view-option${view === mode ? ' is-active' : ''}`}
+                aria-pressed={view === mode} onClick={() => setView(mode)}>
+                {mode === 'tables' ? 'Tables' : 'Floor plan'}
+              </button>
+            ))}
+          </div>
+        )}
+        {picked && (
+          <p className="seat-picking">
+            Choose a table for {picked.name}.{' '}
+            <button type="button" className="btn-text" onClick={() => { setPickedId(null); setMessage(null) }}>Cancel</button>
+          </p>
+        )}
+
         <div className="seating-layout">
-          <section className="surface floor-surface" aria-label={`Floor plan for ${event.label}`}>
-            {info.tables.length ? (
+          <section className="surface floor-surface" ref={floorRef} aria-label={`Tables for ${event.label}`}>
+            {info.tables.length && view === 'tables' ? (
+              <ul className="seating-table-list">
+                {info.tables.map((table) => (
+                  <li key={table.id}>
+                    <button type="button" className={`seating-table-button${selectedId === table.id ? ' is-selected' : ''}`}
+                      aria-pressed={selectedId === table.id}
+                      aria-label={picked ? `Seat ${picked.name} at ${table.name}` : `Manage ${table.name}`}
+                      onClick={() => tableClick(table)}>
+                      <span>
+                        <strong>{table.name}</strong>
+                        <small>{SHAPE_BY_ID[table.shape].label} · {info.used[table.id]} of {table.seats} seats taken</small>
+                        <small>{Math.max(0, table.seats - info.used[table.id])} seats available</small>
+                      </span>
+                      <span className="seating-table-arrow" aria-hidden="true">›</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : info.tables.length ? (
               <div className="floor-scroll">
                 <FloorPlan
                   key={justSeated?.at}
@@ -490,14 +538,14 @@ export default function SeatingPage({
                 )}
               </div>
             )}
-            {info.tables.length > 0 && (
+            {info.tables.length > 0 && view === 'floor' && (
               <p className="floor-hint">
-                Drag tables to arrange them. Drag a guest onto a table, or tap a guest and then a table.
+                Scroll across the plan to see more tables. Drag tables to arrange them, or tap one to manage its guests.
               </p>
             )}
           </section>
 
-          <aside className="seating-side">
+          <aside className="seating-side" ref={sideRef}>
             {selected ? (
               <TablePanel
                 key={selected.id}

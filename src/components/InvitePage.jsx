@@ -139,7 +139,7 @@ const STUDIO_TABS = [
 function InviteTabs({ tab, onTab, readiness }) {
   const missing = readiness.checks.filter((c) => !c.optional && !c.done)
   return (
-    <div className="studio-top">
+    <>
       <p className={`studio-ready${readiness.ready ? ' is-ready' : ''}`}>
         {readiness.ready ? (
           <>✓ Ready to send. Copy the WhatsApp message or save the PDF above.</>
@@ -157,6 +157,7 @@ function InviteTabs({ tab, onTab, readiness }) {
           </>
         )}
       </p>
+      <div className="studio-top">
       <nav data-slide className="studio-tabs" aria-label="Studio sections">
         {STUDIO_TABS.map((t) => (
           <button
@@ -170,7 +171,8 @@ function InviteTabs({ tab, onTab, readiness }) {
           </button>
         ))}
       </nav>
-    </div>
+      </div>
+    </>
   )
 }
 
@@ -178,7 +180,16 @@ export default function InvitePage({ invite, settings, events, onChange, onReply
   const [view, setView] = useState('edit') // phones only: 'edit' | 'preview'
   const [tab, setTab] = useState('details')
   const [copied, setCopied] = useState('')
+  const [copyFallback, setCopyFallback] = useState('')
   const [replay, setReplay] = useState(0)
+  const panelRef = useRef(null)
+  const previousTab = useRef(tab)
+  useEffect(() => {
+    if (previousTab.current === tab) return
+    previousTab.current = tab
+    document.querySelector('.studio-tab.is-active')?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+    if (window.matchMedia('(max-width: 900px)').matches) panelRef.current?.scrollIntoView({ block: 'start' })
+  }, [tab])
   // Scale the true-size iPhone frame (422 x 894 with bezel) to fit the window and the preview column.
   const previewRef = useRef(null)
   const [zoom, setZoom] = useState(0.8)
@@ -217,9 +228,11 @@ export default function InvitePage({ invite, settings, events, onChange, onReply
     const text = whatsappMessage(invite, settings)
     try {
       await navigator.clipboard.writeText(text)
+      setCopyFallback('')
       setCopied('Copied. Paste it into WhatsApp.')
     } catch {
-      setCopied('Could not copy automatically. Select the text in the full preview and copy it.')
+      setCopyFallback(text)
+      setCopied('Press and hold the message below to copy it into WhatsApp.')
     }
   }
 
@@ -247,9 +260,15 @@ export default function InvitePage({ invite, settings, events, onChange, onReply
           {copied}
         </p>
       )}
+      {copyFallback && (
+        <div className="field copy-message-field">
+          <label htmlFor="invite-copy-message">Invitation message</label>
+          <textarea id="invite-copy-message" readOnly value={copyFallback} rows={8} onFocus={(e) => e.target.select()} />
+        </div>
+      )}
       <p className="fine-print invite-note">
-        Sharing the invite as a web link needs the app online (taught in Build & Ship). Until then, send the WhatsApp
-        message or the PDF.
+        Your invitation and preview replies are saved in this browser only. Send the WhatsApp message or PDF to
+        guests; sharing this planner's link will not share your saved invitation or collect their replies.
       </p>
 
       <div data-slide className="view-switch invite-switch" role="group" aria-label="Edit or preview">
@@ -270,7 +289,7 @@ export default function InvitePage({ invite, settings, events, onChange, onReply
         <form className="invite-editor" onSubmit={(e) => e.preventDefault()}>
           <InviteTabs tab={tab} onTab={(t) => smooth(() => setTab(t), 'panel:studio')} readiness={readiness} />
 
-          <div className="studio-panel" data-tab-panel="studio">
+          <div className="studio-panel" data-tab-panel="studio" ref={panelRef}>
             {tab === 'details' && (
               <>
                 <section className="invite-section">
@@ -693,11 +712,9 @@ export default function InvitePage({ invite, settings, events, onChange, onReply
                   {invite.rsvp.show && (
                     <>
                       <p className="field-hint">
-                        Guests fill in a short form: name, phone number, attending or not, how many people and which
-                        events. Each reply goes straight to your <a href="#/guests">Guests</a> page. If the phone number
-                        matches a guest, their reply, number of people and events update automatically; otherwise it
-                        waits there for you to review. For now this works for replies made in this browser (try it in
-                        the preview); replies from guests&apos; own phones arrive once the app is online (Build & Ship).
+                        Try the form in the preview. Replies made here update your <a href="#/guests">Guests</a> list
+                        in this browser, matching by phone number or waiting for your review. Replies from other
+                        devices are not connected yet. Add a WhatsApp number below so replies can be sent to you.
                       </p>
                       <div className="form-grid">
                         <Field label="Reply by (optional)">
@@ -829,9 +846,8 @@ export default function InvitePage({ invite, settings, events, onChange, onReply
                   {invite.wishes.show && (
                     <>
                       <p className="field-hint">
-                        Guests can write wishes on the invitation. Until it is online (Build & Ship), a guest&apos;s
-                        wish only shows on their own screen, so add the wishes you&apos;ve received here to show them to
-                        everyone.
+                        Wishes added in the preview stay on that screen. You can keep wishes you have received here;
+                        they are saved in this browser with your invitation.
                       </p>
                       {invite.wishes.list.map((x, i) => (
                         <div key={i} className="wish-row">
